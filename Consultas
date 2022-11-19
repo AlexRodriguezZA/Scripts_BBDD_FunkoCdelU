@@ -1,0 +1,8 @@
+---Consultas
+
+--Prodcutos por debajo del stock minimo
+select * from producto where stock<10
+
+--Usuarios que hayan comprado entre dos fechas dadas
+
+

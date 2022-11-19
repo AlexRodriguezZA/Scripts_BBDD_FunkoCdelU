@@ -1,0 +1,42 @@
+--Funciones
+--Esta funcion nos permite ver la cantidad de productos que contiene la categoria seleccionada
+--Hacer y probar las consultas
+CREATE OR REPLACE FUNCTION cantidadDeProddeCadaCat(cat int) RETURNS TABLE (idcat int, cantidad int) AS
+$BODY$ 
+DECLARE
+BEGIN
+	return query(SELECT producto.idcat, count(producto.idcat) FROM producto
+	group by producto.idcat having producto.idcat = $1);
+end
+$BODY$
+LANGUAGE 'plpgsql';
+
+
+-------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION UsuarioConMayorCantidadDeCompra(date, date) RETURNS TABLE (usuario varchar(50), cantidad_compras int) AS
+$BODY$
+DECLARE
+BEGIN
+	return query (SELECT usuario.nombre,usuario.dni, count(ventausuario.dni) AS mayor_comprador FROM ventausuario,usuario  
+				  WHERE ventausuario.fecha BETWEEN $1 and $2 
+				  and ventausuario.dni = usuario.dni
+			 GROUP BY ventausuario.dni ORDER BY mayor_comprador DESC);
+end
+$BODY$
+LANGUAGE 'plpgsql';
+
+-------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE FUNCTION UsuarioConMayorCantidadDeCompra(date, date) RETURNS TABLE (usuario varchar(50), cantidad_compras int) AS
+$BODY$
+DECLARE
+BEGIN
+	return query (SELECT usuario.nombre,usuario.dni, count(ventausuario.dni) AS mayor_comprador FROM ventausuario,usuario  
+				  WHERE ventausuario.fecha BETWEEN $1 and $2 
+				  and ventausuario.dni = usuario.dni
+			 GROUP BY ventausuario.dni ORDER BY mayor_comprador DESC);
+end
+$BODY$
+LANGUAGE 'plpgsql';
