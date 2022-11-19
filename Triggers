@@ -35,8 +35,7 @@ FOR EACH ROW EXECUTE PROCEDURE validarCalificacionCompra();
 
 -----------------------------------------------------------------------------------------------------------------------------
 
---Con esta funcion vamos a crear un carrito cuand el usuario este con su 
---cuenta iniciada 
+--Con esta funcion vamos a crear un carrito cuando el usuario creer su cuenta
 
 
 

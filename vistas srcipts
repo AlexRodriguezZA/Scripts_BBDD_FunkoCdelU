@@ -3,12 +3,12 @@
 create view FavoritosDelUsuario 
 as select usuario.nombre,usuario.apellido, producto.nombre as nombreProducto
 from usuario, favoritos,producto 
-where (usuario.dni = favoritos.dni) and (favoritos.idprod = producto.idprod)
+where (usuario.dni = favoritos.dni) and (favoritos.idprod = producto.idprod);
 
 create view HistorialVentas 
 as select usuario.nombre,usuario.apellido, ventausuario.total, ventausuario.fecha
 from usuario, ventausuario 
-where usuario.dni = ventausuario.dni
+where usuario.dni = ventausuario.dni;
 
 
 create view valoracionesProductos as
