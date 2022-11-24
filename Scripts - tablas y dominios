@@ -154,7 +154,8 @@ CREATE TABLE favoritos(
 
 CREATE TABLE carrito(
 	idCarrito SERIAL PRIMARY KEY,
-	dni t_dni
+	dni t_dni,
+	confirm boolean default false
 
 );
 

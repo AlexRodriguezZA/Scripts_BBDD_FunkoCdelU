@@ -13,3 +13,12 @@ where usuario.dni = ventausuario.dni;
 
 create view valoracionesProductos as
 	select * from producto order by promediocalificacion desc;
+	
+	
+create view ProductosSinStock as
+	select * from producto where producto.stock = 0;
+	
+	
+	
+create view ProductosStockbajo as
+	select * from producto where producto.stock < 10;
