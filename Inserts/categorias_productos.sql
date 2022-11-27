@@ -42,5 +42,3 @@ INSERT INTO producto (stock,nombre,precio,descripcion,numerofunko,idcat)
 VALUES (150,'Mbappe',4200,'---',100,4);
 INSERT INTO producto (stock,nombre,precio,descripcion,numerofunko,idcat) 
 VALUES (150,'Messi',15000,'---',10,4);
-
-

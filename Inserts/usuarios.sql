@@ -79,4 +79,3 @@ VALUES (33555623,'Juan carlos','Zamora',2349,'San martin','Juanca@Hotmail.com',f
 INSERT INTO usuario (dni,nombre,apellido,alturadireccion,direccion,email,esadmin,codigopostal)
 
 VALUES (42121212,'Markito','Navajas',223,'barrio sur','MArki@hotmail.com',false,3170);
-

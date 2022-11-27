@@ -55,14 +55,13 @@ CREATE FUNCTION cantidadProductosNoExedidos() RETURNS TRIGGER AS $$
 DECLARE  
 cantidad int;
 BEGIN
-	IF (NEW.idprod is not null) THEN
 		cantidad:= (select producto.stock from producto where producto.idprod = NEW.idprod);
-		IF(cantidad<NEW.cantidaddecadaprod) THEN
-			RAISE EXCEPTION 'La cantidad de productos a comprar excede el stock';
-		ELSE
+		IF(cantidad>NEW.cantidaddecadaprod) THEN
 			return new;
+		ELSE
+			RAISE EXCEPTION 'La cantidad de productos a comprar excede el stock';
 		end if;
-	end if;
+
 END;
 $$ LANGUAGE plpgsql;
 
@@ -143,4 +142,5 @@ $$ LANGUAGE plpgsql;
 create trigger triggerAumentarSTOCK BEFORE insert or update on compraprod
 for each row execute procedure aumentarElstock();
 
+-------------------------------------------------------------------------------------------------------------------------------
 

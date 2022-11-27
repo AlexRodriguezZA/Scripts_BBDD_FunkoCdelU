@@ -35,6 +35,3 @@ INSERT INTO ciudad (codigopostal,ciudad)
 VALUES (3240,'Villaguay');
 INSERT INTO ciudad (codigopostal,ciudad) 
 VALUES (3280,'Colon');
-
-
-select * from ciudad
