@@ -11,11 +11,13 @@ DECLARE
 produ int;
 BEGIN
  
+--Si el usuario compro dicho producto recien ahi puede calificar el producto
+-- de lo contrario no
 produ = 0;
 
-produ = (select idprod from CompraUsuario where 
+produ = (select idprod from (select idprod from CompraUsuario where 
 			 (new.dni = dni) and 
-			 (new.idprod = idprod));
+			 (new.idprod = idprod)) as compra order by idprod desc limit 1);
 
 if (produ>0) then
 	return new;
@@ -99,10 +101,10 @@ idProdEnFavoritos int;
 BEGIN
 idProdEnFavoritos = 0;
 
-idProdEnFavoritos = (select idprod from favoritos 
+idProdEnFavoritos = (select idprod from (select idprod from favoritos 
 					 where (new.idprod = favoritos.idprod) 
-					 and (new.dni = favoritos.dni));
-if (idProdEnFavoritos > 0) then
+					 and (new.dni = favoritos.dni)) as fav order by idprod desc limit 1);
+if (idProdEnFavoritos = 0)  or (idProdEnFavoritos is null) then
 	return new;
 else
 	RAISE EXCEPTION 'El usuario ya tiene este producto en la seccion favoritos';
@@ -111,7 +113,7 @@ end if;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_Favoritos AFTER INSERT ON favoritos
+CREATE TRIGGER trigger_Favoritos BEFORE INSERT ON favoritos
 FOR EACH ROW EXECUTE PROCEDURE ProductoFavoritoPorUsuario();
 
 
@@ -174,3 +176,5 @@ create trigger triggerDescontarSTOCK After update on ventausuario
 for each row execute procedure DescontarElstock();
 
 select * from lineaventa
+
+--------------------------------------------------------------------------------------------
