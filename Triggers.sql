@@ -155,26 +155,26 @@ cantidad_a_restar int;
 
 BEGIN
 
-if (new.estadocompra = 'finalizada') then
-	FOR r IN select * from lineaventa where lineaventa.idventa = old.idventa
-		LOOP
-			idproducto:= r.idprod;
-			cantidad_a_restar:= r.cantproduc;
+if (new.total > 0) then
+	if (new.estadocompra = 'finalizada') then
+		FOR r IN select * from lineaventa where lineaventa.idventa = old.idventa
+			LOOP
+				idproducto:= r.idprod;
+				cantidad_a_restar:= r.cantproduc;
 		
-			update producto set stock = stock - cantidad_a_restar where idprod = idproducto;
+				update producto set stock = stock - cantidad_a_restar where idprod = idproducto;
 			
-		END LOOP;
+			END LOOP;
 	
 	
-end if;
- 
-
+	end if;
+end if; 
+Return new;
 END;
 $$ LANGUAGE plpgsql;
 
 create trigger triggerDescontarSTOCK After update on ventausuario
 for each row execute procedure DescontarElstock();
 
-select * from lineaventa
 
---------------------------------------------------------------------------------------------
+
