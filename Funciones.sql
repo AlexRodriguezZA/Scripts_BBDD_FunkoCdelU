@@ -1,59 +1,54 @@
---Funciones
---Funcion que nos permite ver la cantidad de productos de una categoría dada.
-CREATE OR REPLACE FUNCTION cantidadDeProddeCadaCat(cat int) RETURNS TABLE (idcat int, cantidad int) AS
-$BODY$ 
-DECLARE
+---Compras del dia
+CREATE OR REPLACE FUNCTION Get_compras_del_dia (fecha date) 
+    RETURNS TABLE (
+        usuario_nombre VARCHAR,
+		usuario_apellido varchar,
+		total_venta t_precio,
+		fecha_venta date,
+		hora_venta time
+) 
+AS $$
 BEGIN
-	return query(SELECT producto.idcat, count(producto.idcat) FROM producto
-	group by producto.idcat having producto.idcat = $1);
-end
-$BODY$
+    RETURN QUERY
+    SELECT usuario.nombre,usuario.apellido,ventausuario.total,ventausuario.fecha,ventausuario.hora
+    FROM ventausuario,usuario
+    WHERE ventausuario.fecha = $1 and ventausuario.dni = usuario.dni;
+END; $$ 
+
 LANGUAGE 'plpgsql';
-
-
--------------------------------------------------------------------------------------------------------
-
---Funcion que nos permite ver que usuarios compraron mas entre dos fechas determinadas
-
-CREATE OR REPLACE FUNCTION UsuarioConMayorCantidadDeCompra(date, date) RETURNS TABLE (usuario varchar(50), cantidad_compras int) AS
-$BODY$
-DECLARE
-BEGIN
-	return query (SELECT usuario.nombre,usuario.dni, count(ventausuario.dni) AS mayor_comprador FROM ventausuario,usuario  
-				  WHERE ventausuario.fecha BETWEEN $1 and $2 
-				  and ventausuario.dni = usuario.dni
-			 GROUP BY ventausuario.dni ORDER BY mayor_comprador DESC);
-end
-$BODY$
-LANGUAGE 'plpgsql';
-
--------------------------------------------------------------------------------------------------------
-
-
---Funcion que nos permite ver que usuarios compraron en una fecha dada
-
-CREATE OR REPLACE FUNCTION compraendeterminadafecha(date) RETURNS TABLE (usuario varchar(50),venta_fecha date, total t_precio) AS
-$BODY$
-
-DECLARE
-BEGIN
-	return query (SELECT usuario.nombre, ventausuario.fecha,ventausuario.total FROM ventausuario,usuario  
-				  WHERE ventausuario.fecha = $1 
-				  and ventausuario.dni = usuario.dni);
-end
-
 -------------------------------------------------------------------------------------------------------
 
 --Funcion que nos permite ver las compras de un usuario dado
-CREATE OR REPLACE FUNCTION compradeunusuario(dni t_dni) RETURNS TABLE (usuario varchar(50),venta_fecha date, total t_precio) AS
-$BODY$
 
-DECLARE
+CREATE OR REPLACE FUNCTION Get_compra_usuario (dni t_dni) 
+    RETURNS TABLE (
+        usuario_nombre VARCHAR,
+		usuario_apellido varchar,
+		total_venta t_precio,
+		fecha_venta date,
+		hora_venta time
+) 
+AS $$
 BEGIN
-	return query (SELECT usuario.nombre,usuario.apellido, ventausuario.fecha,ventausuario.total FROM ventausuario,usuario  
-				  WHERE ventausuario.dni = $1 
-				  and ventausuario.dni = usuario.dni);
-end
+    RETURN QUERY
+    SELECT usuario.nombre,usuario.apellido,ventausuario.total,ventausuario.fecha,ventausuario.hora
+    FROM ventausuario,usuario
+    WHERE ventausuario.dni = $1 and ventausuario.dni = usuario.dni;
+END; $$ 
 
-$BODY$
 LANGUAGE 'plpgsql';
+
+-------------------------------------------------------------------------------------
+
+---Con esta función obtenemos cuantos productos tenemos por la categoria seleccionada
+CREATE OR REPLACE FUNCTION Get_cantidad_productos_de_cada_categoria(idcat int) RETURNS int AS $$
+DECLARE
+cantidad int;
+BEGIN
+   cantidad = (select count(producto.idcat) from producto where producto.idcat = $1);
+   
+   return cantidad;
+END; $$ 
+
+LANGUAGE 'plpgsql';
+

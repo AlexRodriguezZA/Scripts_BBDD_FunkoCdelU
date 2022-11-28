@@ -146,7 +146,7 @@ for each row execute procedure aumentarElstock();
 
 -------------------------------------------------------------------------------------------------------------------------------
 
-------------------TRIGGR DESCONTAR HACERLOooooooo
+--con este trigger al vender un determinado funko descontamos el stock del mismo
 CREATE FUNCTION DescontarElstock() RETURNS TRIGGER AS $$
 DECLARE
 r record;

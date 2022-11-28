@@ -1,4 +1,8 @@
 --Vistas
+create view Usuario_que_mas_compras_hizo as
+select usuario.nombre,usuario.apellido,usuario.dni,tabla1.cant_compras from 
+(SELECT ventausuario.dni, COUNT(ventausuario.dni) cant_compras FROM ventausuario GROUP BY ventausuario.dni 
+		ORDER BY cant_compras DESC LIMIT 1) as tabla1, usuario where usuario.dni = tabla1.dni;
 
 create view FavoritosDelUsuario 
 as select usuario.nombre,usuario.apellido, producto.nombre as nombreProducto

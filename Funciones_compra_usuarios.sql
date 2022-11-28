@@ -183,7 +183,7 @@ SELECT confirmar_estado_de_venta(funcion_encontrar_dni_del_idcarrito(3));
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
 
---DESCONTAR EL SOTCK DE Los productos comprados
+
 
 select * from ventausuario
 select * from lineaventa
