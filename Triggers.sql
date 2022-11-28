@@ -144,3 +144,33 @@ for each row execute procedure aumentarElstock();
 
 -------------------------------------------------------------------------------------------------------------------------------
 
+------------------TRIGGR DESCONTAR HACERLOooooooo
+CREATE FUNCTION DescontarElstock() RETURNS TRIGGER AS $$
+DECLARE
+r record;
+idproducto int;
+cantidad_a_restar int;
+
+BEGIN
+
+if (new.estadocompra = 'finalizada') then
+	FOR r IN select * from lineaventa where lineaventa.idventa = old.idventa
+		LOOP
+			idproducto:= r.idprod;
+			cantidad_a_restar:= r.cantproduc;
+		
+			update producto set stock = stock - cantidad_a_restar where idprod = idproducto;
+			
+		END LOOP;
+	
+	
+end if;
+ 
+
+END;
+$$ LANGUAGE plpgsql;
+
+create trigger triggerDescontarSTOCK After update on ventausuario
+for each row execute procedure DescontarElstock();
+
+select * from lineaventa
