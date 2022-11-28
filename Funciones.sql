@@ -1,5 +1,26 @@
----Compras del dia
+---ventas del dia
 CREATE OR REPLACE FUNCTION Get_compras_del_dia (fecha date) 
+    RETURNS TABLE (
+        usuario_nombre VARCHAR,
+		usuario_apellido varchar,
+		total_venta t_precio,
+		fecha_venta date,
+		hora_venta time
+) 
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT usuario.nombre,usuario.apellido,ventausuario.total,ventausuario.fecha,ventausuario.hora
+    FROM ventausuario,usuario
+    WHERE ventausuario.fecha = $1 and ventausuario.dni = usuario.dni;
+END; $$ 
+
+LANGUAGE 'plpgsql';
+
+
+-------------------------------------------------------------------------------------------------------
+---Ventas realizada en una determinada fecha
+CREATE OR REPLACE FUNCTION Get_compras_fecha_dada (fecha date) 
     RETURNS TABLE (
         usuario_nombre VARCHAR,
 		usuario_apellido varchar,
