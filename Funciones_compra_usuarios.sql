@@ -57,10 +57,13 @@ $$ LANGUAGE plpgsql;
 CREATE FUNCTION calcular_total_venta(dni t_dni) RETURNS t_precio AS $$
 DECLARE
 total t_precio;
+ultima_idventa int;
 BEGIN
 
+ultima_idventa = (select idventa from ventausuario order by idventa desc limit 1);
 	total = (select sum(lineaventa.totalprod)from lineaventa,ventausuario 
-			 where ventausuario.dni = $1 and lineaventa.idventa = ventausuario.idventa);
+			 where ventausuario.dni = $1 and lineaventa.idventa = ultima_idventa
+			and lineaventa.idventa = ventausuario.idventa);
 
 return total;
 END;
@@ -78,6 +81,15 @@ DECLARE
 nro_carrito int;
 idventa_ventausuario int;
 BEGIN
+--recogemos el idventa de ventausuario para luego poder actualizar y colocar el monto total
+idventa_ventausuario = (select idventa from ventausuario 
+		   where ventausuario.dni = $1 and ventausuario.total is null);
+
+--Calculamos el total de la factura y lo colocamos en la ventausuario
+
+UPDATE ventausuario set total = calcular_total_venta($1) 
+where ventausuario.dni = $1 and ventausuario.idventa = idventa_ventausuario 
+and ventausuario.total is null;
 
 
 --Obtenes el idcarrito que está asociado al dni de usuario para luego eliminar
@@ -99,15 +111,6 @@ UPDATE carrito SET confirm = false where carrito.dni = $1;
 -- nueva compra
 delete from lineacarrito where lineacarrito.idcarrito = nro_carrito;
 
---recogemos el idventa de ventausuario para luego poder actualizar y colocar el monto total
-idventa_ventausuario = (select idventa from ventausuario 
-		   where ventausuario.dni = $1 and ventausuario.total is null);
-
---Calculamos el total de la factura y lo colocamos en la ventausuario
-
-UPDATE ventausuario set total = calcular_total_venta($1) 
-where ventausuario.dni = $1 and ventausuario.idventa = idventa_ventausuario 
-and ventausuario.total is null;
 
 
 END;
