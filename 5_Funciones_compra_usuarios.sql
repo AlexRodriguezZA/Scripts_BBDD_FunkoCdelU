@@ -21,7 +21,7 @@ FOR r IN select * from carrito
 LOOP 
 
 	IF (r.confirm = true) and (r.dni = $1) then
-	--Creamos la venta usuario con los datos minimos
+	--Creamos la venta usuario con los datos mínimos
 		INSERT INTO ventausuario (hora,fecha,dni) 
 		VALUES (current_time(0),CURRENT_DATE,$1);
 	
@@ -32,7 +32,7 @@ LOOP
 			precio_total_lineacarrito:= f.precio;
 			cantidad_lineacarrito:= f.cantidaddecadaprod;
 			idprod_lineacarrito:= f.idprod;
-			--Encontramos el idventa con el dni_user
+			--Encontramos el idventa con el dni ingresado
 			idventa_user = (select idventa from usuario,ventausuario 
 							where usuario.dni = $1 and ventausuario.dni = $1 and ventausuario.estadocompra is null);
 			
@@ -72,7 +72,7 @@ $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------
 
 --Con esta función logramos los siguientes objetivos:
--- 1) Poner en finalizada la compra del usuario
+-- 1) Poner en "finalizada" la compra del usuario
 -- 2) Poner en false la comfirmación del carrito
 -- 3) Eliminar las lineas del carrito del usuario 
 --4) calcular el total de la venta y ponerla en ventausuario
@@ -119,7 +119,7 @@ $$ LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------------------------
 
---COn esta función podemos encontrar el dni del usuario a travez de su carrito
+--COn esta función podemos encontrar el dni del usuario a travez del id de su carrito
 
 CREATE FUNCTION funcion_encontrar_dni_del_idcarrito(idcarrito int) RETURNS t_dni AS $$
 DECLARE
