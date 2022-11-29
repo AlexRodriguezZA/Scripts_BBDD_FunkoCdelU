@@ -1,3 +1,6 @@
+
+--parametro: dni del usuario 
+--El objetivo de la funcion es poner el estado del carrito en true para luego crear lineaventa y ventausuario  
 CREATE FUNCTION confirmar_comprar_del_carrito(dni_user t_dni) RETURNS void AS $$
 
 DECLARE
@@ -13,10 +16,7 @@ BEGIN
 UPDATE carrito SET confirm = true WHERE dni = $1;
 
 --Hacemos un bucle sobre el carrito y con un condicional nos fijamos que el 
---confirm sea true, luego buscamos la linea carrito y creamos lineaventa y venta usuario,
---luego una vez finalizada la compra /hacerlo con una funcion -> "FINALIZADA"/ con un trigger 
--- validar stock
-
+--confirm sea "true", luego buscamos la linea carrito y creamos lineaventa y venta usuario.
 FOR r IN select * from carrito
 LOOP 
 
@@ -52,6 +52,7 @@ $$ LANGUAGE plpgsql;
 
 
 ----------------------------------------------------------------------------------------------------
+--parametro: dni usuario
 --El ojetivo de esta función es sacar la suma total de la lineaventa de usuario
 --para luego utilizarla en la ventausuario -> "factura"
 CREATE FUNCTION calcular_total_venta(dni t_dni) RETURNS t_precio AS $$
@@ -76,6 +77,8 @@ $$ LANGUAGE plpgsql;
 -- 2) Poner en false la comfirmación del carrito
 -- 3) Eliminar las lineas del carrito del usuario 
 --4) calcular el total de la venta y ponerla en ventausuario
+
+--parametro: dni del usuario
 CREATE FUNCTION confirmar_estado_de_venta(dni t_dni) RETURNS void AS $$
 DECLARE
 nro_carrito int;
@@ -119,8 +122,9 @@ $$ LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------------------------
 
---COn esta función podemos encontrar el dni del usuario a travez del id de su carrito
+--Con esta función podemos encontrar el dni del usuario a travez del id de su carrito
 
+--parametro: id del carrito
 CREATE FUNCTION funcion_encontrar_dni_del_idcarrito(idcarrito int) RETURNS t_dni AS $$
 DECLARE
 dni_user t_dni;
