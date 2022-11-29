@@ -73,3 +73,25 @@ END; $$
 
 LANGUAGE 'plpgsql';
 
+-------------------------------------------------------------------------------------------------------
+
+--Función que nos permite ver los productos en favoritos de un usuario dado
+
+CREATE OR REPLACE FUNCTION Get_favoritos_usuario (dni t_dni) 
+    RETURNS TABLE (
+        usuario_nombre VARCHAR,
+		usuario_apellido varchar,
+		nombre_funko varchar,
+		precio_funko t_precio,
+		numero_funko int
+) 
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT usuario.nombre,usuario.apellido,producto.nombre,producto.precio,producto.numerofunko
+    FROM usuario,favoritos,producto
+    WHERE usuario.dni = $1 and favoritos.dni = usuario.dni and favoritos.idprod = producto.idprod;
+END; $$ 
+
+LANGUAGE 'plpgsql';
+
