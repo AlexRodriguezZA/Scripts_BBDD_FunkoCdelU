@@ -4,7 +4,7 @@ as select usuario.dni, producto.idprod, ventausuario.fecha
 from usuario, ventausuario,lineaventa,producto 
 where (usuario.dni = ventausuario.dni) and 
 (ventausuario.idventa = lineaventa.idventa) and 
-(lineaventa.idprod = producto.idprod)  
+(lineaventa.idprod = producto.idprod);
 
 CREATE FUNCTION validarCalificacionCompra() RETURNS TRIGGER AS $$
 DECLARE 
@@ -38,7 +38,7 @@ FOR EACH ROW EXECUTE PROCEDURE validarCalificacionCompra();
 CREATE FUNCTION CrearCarrito() RETURNS TRIGGER AS $$
 BEGIN
 
-if (NEW.dni <> NULL) and (NEW.dni <> ' ') then
+if (NEW.dni is not null) then
 	INSERT INTO carrito (dni) VALUES (NEW.dni);
 else 
 	RAISE EXCEPTION 'Ingrese el dni del usuario';

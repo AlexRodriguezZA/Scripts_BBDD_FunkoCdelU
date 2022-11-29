@@ -53,3 +53,5 @@ VALUES (current_time(0),'MUy recomendable',CURRENT_DATE,31450594,3);
 
 INSERT INTO comentarios (hora,contenido,fecha,dni,idprod) 
 VALUES (current_time(0),'No me gusto xddd',CURRENT_DATE,31450594,4);
+
+
