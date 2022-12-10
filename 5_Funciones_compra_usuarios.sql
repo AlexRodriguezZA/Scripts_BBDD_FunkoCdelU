@@ -45,8 +45,8 @@ LOOP
 END LOOP;
 
 
-
 END;
+
 $$ LANGUAGE plpgsql;
 
 
@@ -116,7 +116,9 @@ delete from lineacarrito where lineacarrito.idcarrito = nro_carrito;
 
 
 
+
 END;
+
 $$ LANGUAGE plpgsql;
 
 
