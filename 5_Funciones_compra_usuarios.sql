@@ -1,6 +1,7 @@
 
 --parametro: dni del usuario 
 --El objetivo de la funcion es poner el estado del carrito en true para luego crear lineaventa y ventausuario  
+begin;
 CREATE FUNCTION confirmar_comprar_del_carrito(dni_user t_dni) RETURNS void AS $$
 
 DECLARE
@@ -48,7 +49,7 @@ END LOOP;
 END;
 
 $$ LANGUAGE plpgsql;
-
+commit;
 
 
 ----------------------------------------------------------------------------------------------------
@@ -79,6 +80,7 @@ $$ LANGUAGE plpgsql;
 --4) calcular el total de la venta y ponerla en ventausuario
 
 --parametro: dni del usuario
+begin;
 CREATE FUNCTION confirmar_estado_de_venta(dni t_dni) RETURNS void AS $$
 DECLARE
 nro_carrito int;
@@ -120,7 +122,7 @@ delete from lineacarrito where lineacarrito.idcarrito = nro_carrito;
 END;
 
 $$ LANGUAGE plpgsql;
-
+commit;
 
 ----------------------------------------------------------------------------------------
 
