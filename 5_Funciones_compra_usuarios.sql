@@ -90,8 +90,8 @@ BEGIN
 idventa_ventausuario = (select idventa from ventausuario 
 		   where ventausuario.dni = $1 and ventausuario.total is null);
 
---Calculamos el total de la factura y lo colocamos en la ventausuario
 
+--Calculamos el total de la factura y lo colocamos en la ventausuario
 UPDATE ventausuario set total = calcular_total_venta($1) 
 where ventausuario.dni = $1 and ventausuario.idventa = idventa_ventausuario 
 and ventausuario.total is null;
