@@ -76,12 +76,13 @@ $$ LANGUAGE plpgsql;
 --Con esta función logramos los siguientes objetivos:
 -- 1) Poner en "finalizada" la compra del usuario
 -- 2) Poner en false la comfirmación del carrito
+
 -- 3) Eliminar las lineas del carrito del usuario 
 --4) calcular el total de la venta y ponerla en ventausuario
 
 --parametro: dni del usuario
 begin;
-CREATE FUNCTION confirmar_estado_de_venta(dni t_dni) RETURNS void AS $$
+CREATE FUNCTION confirmar_estado_de_venta(dni t_dni,mercadopago_id varchar(110)) RETURNS void AS $$
 DECLARE
 nro_carrito int;
 idventa_ventausuario int;
@@ -107,6 +108,12 @@ nro_carrito = (select idcarrito from carrito where carrito.dni = $1);
 UPDATE ventausuario SET estadocompra = 'finalizada' 
 WHERE ventausuario.dni = $1 and ventausuario.estadocompra is null ;
 
+
+--mercado pago
+UPDATE ventausuario SET mercadopago_id = $2 
+WHERE ventausuario.dni = $1 and ventausuario.mercadopago_id is null ;
+
+
 -- Actualizamos la confirmacion del carrito a "false" para poder reutilizarlo
 -- en la proxima compra del usuario
 UPDATE carrito SET confirm = false where carrito.dni = $1;
@@ -123,7 +130,6 @@ END;
 
 $$ LANGUAGE plpgsql;
 commit;
-
 ----------------------------------------------------------------------------------------
 
 --Con esta función podemos encontrar el dni del usuario a travez del id de su carrito

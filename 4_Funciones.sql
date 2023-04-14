@@ -104,6 +104,20 @@ BEGIN
     FROM usuario,favoritos,producto
     WHERE usuario.dni = $1 and favoritos.dni = usuario.dni and favoritos.idprod = producto.idprod;
 END; $$ 
-
 LANGUAGE 'plpgsql';
+-------------------------------------------------------------------------------------------------------
+
+
+CREATE FUNCTION DeleteLineaCarrito(idcarrito_user int) RETURNS void AS $$
+BEGIN
+
+DELETE FROM lineacarrito where lineacarrito.idcarrito = idcarrito_user;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
 

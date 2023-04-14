@@ -58,7 +58,7 @@ DECLARE
 cantidad int;
 BEGIN
 		cantidad:= (select producto.stock from producto where producto.idprod = NEW.idprod);
-		IF(cantidad>NEW.cantidaddecadaprod) THEN
+		IF(cantidad>=NEW.cantidaddecadaprod) THEN
 			return new;
 		ELSE
 			RAISE EXCEPTION 'La cantidad de productos a comprar excede el stock';
@@ -119,62 +119,72 @@ FOR EACH ROW EXECUTE PROCEDURE ProductoFavoritoPorUsuario();
 
 -------------------------------------------------------------------------------------------------------------------------------
 
---con este trigger al cargar la compraprod aumentamos el stocko del funko
 
-CREATE FUNCTION aumentarElstock() RETURNS TRIGGER AS $$
-DECLARE  
-produ int;
-BEGIN
- 
-produ = 0;
-
-produ = (select idprod from producto where new.idprod = idprod);
-
-if (produ>0) then
-	update producto set stock = NEW.cantidad + producto.stock
-  	where idprod = NEW.idprod;
-	return new;
-	
-  else 
-	RAISE EXCEPTION 'El producto no se encuentra cargado';
-END IF;
-END;
-$$ LANGUAGE plpgsql;
-
-create trigger triggerAumentarSTOCK BEFORE insert or update on compraprod
-for each row execute procedure aumentarElstock();
 
 -------------------------------------------------------------------------------------------------------------------------------
 
 --con este trigger al vender un determinado funko descontamos el stock del mismo
 CREATE FUNCTION DescontarElstock() RETURNS TRIGGER AS $$
+
 DECLARE
 r record;
-idproducto int;
-cantidad_a_restar int;
+id_ultima_venta int;
 
 BEGIN
-
-if (new.total > 0) then
-	if (new.estadocompra = 'finalizada') then
-		FOR r IN select * from lineaventa where lineaventa.idventa = old.idventa
+id_ultima_venta = (select idventa from ventausuario ORDER BY idventa DESC LIMIT 1);
+if (new.estadocompra = 'finalizada') then
+		FOR r IN select * from lineaventa,ventausuario where lineaventa.idventa = ventausuario.idventa and ventausuario.idventa = id_ultima_venta
 			LOOP
-				idproducto:= r.idprod;
-				cantidad_a_restar:= r.cantproduc;
-		
-				update producto set stock = stock - cantidad_a_restar where idprod = idproducto;
-			
+				update producto set stock = stock - r.cantproduc  where idprod = r.idprod;
 			END LOOP;
 	
 	
-	end if;
-end if; 
+end if;
 Return new;
 END;
+
 $$ LANGUAGE plpgsql;
 
 create trigger triggerDescontarSTOCK After update on ventausuario
 for each row execute procedure DescontarElstock();
 
+-----------------------------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION actualizar_stock()
+RETURNS TRIGGER AS $$
+DECLARE
+    cantidad_vendida INTEGER;
+BEGIN
+    -- Obtenemos la cantidad vendida de la línea de venta que se acaba de insertar
+    cantidad_vendida := NEW.cantidad;
 
+    -- Verificamos que haya suficiente stock disponible
+    IF cantidad_vendida > (SELECT stock FROM productos WHERE id = NEW.id_producto) THEN
+        RAISE EXCEPTION 'No hay suficiente stock disponible';
+    END IF;
 
+    -- Actualizamos el stock del producto
+    UPDATE productos SET stock = stock - cantidad_vendida WHERE id = NEW.id_producto;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER actualizar_stock
+AFTER INSERT ON linea_venta
+FOR EACH ROW
+EXECUTE FUNCTION actualizar_stock();
+
+-----------------------------------------------------------------------------------------------------------------------------------
+--Cuando el stock de funko quede en cero se elimina del los carritos del usuario
+
+CREATE OR REPLACE FUNCTION eliminar_producto() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.stock = 0 THEN
+        DELETE FROM lineacarrito WHERE lineacarrito.idprod = NEW.idprod;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER actualizar_stock AFTER UPDATE ON producto
+FOR EACH ROW EXECUTE FUNCTION eliminar_producto();

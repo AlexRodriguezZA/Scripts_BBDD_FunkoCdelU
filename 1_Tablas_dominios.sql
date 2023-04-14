@@ -30,7 +30,7 @@ CREATE TABLE categoria (
  alter table producto
  add constraint idCat
  foreign key (idCat) references categoria (idCat)
-   ON DELETE restrict
+   ON DELETE cascade
    ON UPDATE cascade;
  
 
@@ -210,7 +210,7 @@ CREATE TABLE VentaUsuario (
  alter table VentaUsuario
  add constraint dni
  foreign key (dni) references usuario (dni)
-   ON DELETE restrict
+   ON DELETE cascade
    ON UPDATE cascade;
  
 
@@ -235,35 +235,18 @@ CREATE TABLE LineaVenta (
 alter table LineaVenta
  add constraint idProd
  foreign key (idProd) references producto (idProd)
-   ON DELETE restrict
+   ON DELETE cascade
    ON UPDATE cascade;
  
 
 alter table LineaVenta
  add constraint idVenta
  foreign key (idVenta) references VentaUsuario (idVenta)
-   ON DELETE restrict
+   ON DELETE cascade
    ON UPDATE cascade;
  
 
 ------------------------------------------------------------------------------------- 
 
 
-CREATE TABLE compraProd (
-	idCompra SERIAL PRIMARY KEY,
-	cantidad int,
-	fecha date,
-	idProd int
-
-);
-
-alter table compraProd
- add constraint idProd
- foreign key (idProd) references producto (idProd)
-   ON DELETE restrict
-   ON UPDATE cascade;
- 
-
-
-------------------------------------------------------------------------------------- 
 

@@ -26,3 +26,25 @@ create view ProductosSinStock as
 	
 create view ProductosStockbajo as
 	select * from producto where producto.stock < 10;
+	
+	
+
+CREATE VIEW Top3usuarioConMasCompras as
+select nombre,apellido,email,usuario.dni,total as totalventas from usuario,
+(select dni, count(dni) as total from ventausuario group by dni ) as tabla2 where
+usuario.dni = tabla2.dni order by tabla2.total DESC limit 4; 
+
+CREATE VIEW top3_funkos_mas_vendidos as
+SELECT producto.imagen,
+    producto.nombre,
+    producto.idprod,
+    producto.numerofunko,
+    tabla2.total
+   FROM producto,
+    ( SELECT lineaventa.idprod,
+            sum(lineaventa.cantproduc) AS total
+           FROM lineaventa
+          GROUP BY lineaventa.idprod) tabla2
+  WHERE producto.idprod = tabla2.idprod
+  ORDER BY tabla2.total DESC
+ LIMIT 3;
