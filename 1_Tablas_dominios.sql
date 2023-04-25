@@ -57,6 +57,7 @@ CREATE TABLE usuario (
 	dni t_dni PRIMARY KEY,
 	nombre varchar(20) NOT NULL,
 	apellido varchar (20) NOT NULL,
+	telefono varchar (20),
 	alturaDireccion int ,
 	direccion varchar (20),
 	email varchar(50) unique,
