@@ -126,6 +126,7 @@ FOR EACH ROW EXECUTE PROCEDURE ProductoFavoritoPorUsuario();
 --con este trigger al vender un determinado funko descontamos el stock del mismo
 CREATE FUNCTION DescontarElstock() RETURNS TRIGGER AS $$
 
+
 DECLARE
 r record;
 id_ultima_venta int;

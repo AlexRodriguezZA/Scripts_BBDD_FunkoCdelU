@@ -4,6 +4,8 @@
 begin;
 CREATE FUNCTION confirmar_comprar_del_carrito(dni_user t_dni) RETURNS void AS $$
 
+
+
 DECLARE
 
 r record;
@@ -57,6 +59,7 @@ commit;
 --El ojetivo de esta función es sacar la suma total de la lineaventa de usuario
 --para luego utilizarla en la ventausuario -> "factura"
 CREATE FUNCTION calcular_total_venta(dni t_dni) RETURNS t_precio AS $$
+
 DECLARE
 total t_precio;
 ultima_idventa int;
@@ -69,6 +72,7 @@ ultima_idventa = (select idventa from ventausuario order by idventa desc limit 1
 
 return total;
 END;
+
 $$ LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------------------------------------
@@ -92,6 +96,7 @@ idventa_ventausuario = (select idventa from ventausuario
 		   where ventausuario.dni = $1 and ventausuario.total is null);
 
 
+
 --Calculamos el total de la factura y lo colocamos en la ventausuario
 UPDATE ventausuario set total = calcular_total_venta($1) 
 where ventausuario.dni = $1 and ventausuario.idventa = idventa_ventausuario 
@@ -103,16 +108,16 @@ and ventausuario.total is null;
 
 nro_carrito = (select idcarrito from carrito where carrito.dni = $1);
 
---Actualizamos el estado de la compra a "finalizada"
-
-UPDATE ventausuario SET estadocompra = 'finalizada' 
-WHERE ventausuario.dni = $1 and ventausuario.estadocompra is null ;
 
 
 --mercado pago
 UPDATE ventausuario SET mercadopago_id = $2 
 WHERE ventausuario.dni = $1 and ventausuario.mercadopago_id is null ;
 
+--Actualizamos el estado de la compra a "finalizada"
+
+UPDATE ventausuario SET estadocompra = 'finalizada' 
+WHERE ventausuario.dni = $1 and ventausuario.estadocompra is null ;
 
 -- Actualizamos la confirmacion del carrito a "false" para poder reutilizarlo
 -- en la proxima compra del usuario
@@ -127,6 +132,8 @@ delete from lineacarrito where lineacarrito.idcarrito = nro_carrito;
 
 
 END;
+
+
 
 $$ LANGUAGE plpgsql;
 commit;
