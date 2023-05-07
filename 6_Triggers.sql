@@ -150,30 +150,6 @@ create trigger triggerDescontarSTOCK After update on ventausuario
 for each row execute procedure DescontarElstock();
 
 -----------------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION actualizar_stock()
-RETURNS TRIGGER AS $$
-DECLARE
-    cantidad_vendida INTEGER;
-BEGIN
-    -- Obtenemos la cantidad vendida de la línea de venta que se acaba de insertar
-    cantidad_vendida := NEW.cantidad;
-
-    -- Verificamos que haya suficiente stock disponible
-    IF cantidad_vendida > (SELECT stock FROM productos WHERE id = NEW.id_producto) THEN
-        RAISE EXCEPTION 'No hay suficiente stock disponible';
-    END IF;
-
-    -- Actualizamos el stock del producto
-    UPDATE productos SET stock = stock - cantidad_vendida WHERE id = NEW.id_producto;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER actualizar_stock
-AFTER INSERT ON linea_venta
-FOR EACH ROW
-EXECUTE FUNCTION actualizar_stock();
 
 -----------------------------------------------------------------------------------------------------------------------------------
 --Cuando el stock de funko quede en cero se elimina del los carritos del usuario

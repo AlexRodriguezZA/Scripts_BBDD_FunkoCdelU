@@ -204,7 +204,7 @@ CREATE TABLE VentaUsuario (
 	dni t_dni,
 	estadoCompra varchar(30),
 	mercadopago_id varchar(100)
-	select * from ventausuario;
+
 
 
 );
